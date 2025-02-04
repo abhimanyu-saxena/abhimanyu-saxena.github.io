@@ -3258,35 +3258,21 @@ input, select, textarea {
 			}
 
 			#header.alt > * {
-				-moz-transition: opacity 3s ease;
-				-webkit-transition: opacity 3s ease;
-				-ms-transition: opacity 3s ease;
-				transition: opacity 3s ease;
-				-moz-transition-delay: 0.5s;
-				-webkit-transition-delay: 0.5s;
-				-ms-transition-delay: 0.5s;
-				transition-delay: 0.5s;
+				transition: opacity 0.5s ease;  /* Shorten the transition time */
 				opacity: 1;
 			}
-
+			
 			#header.alt .logo {
-				-moz-transition: opacity 1.25s ease, -moz-transform 0.5s ease;
-				-webkit-transition: opacity 1.25s ease, -webkit-transform 0.5s ease;
-				-ms-transition: opacity 1.25s ease, -ms-transform 0.5s ease;
-				transition: opacity 1.25s ease, transform 0.5s ease;
-				-moz-transition-delay: 0s;
-				-webkit-transition-delay: 0s;
-				-ms-transition-delay: 0s;
-				transition-delay: 0s;
+				transition: opacity 0.5s ease, transform 0.5s ease; /* Shortened transition */
 				display: block;
 				margin: 0 0 1.5em 0;
 			}
-
-				#header.alt .logo img {
-					display: block;
-					margin: 0 auto;
-					max-width: 75%;
-				}
+			
+			#header.alt .logo img {
+				display: block;
+				margin: 0 auto;
+				max-width: 75%;
+			}
 
 		@media screen and (max-width: 1280px) {
 
@@ -3576,7 +3562,7 @@ input, select, textarea {
 			#main button.primary,
 			#main .button.primary {
 				background-color: #8cc9f0;
-				color: #ffffff !important;
+				color: #050505 !important;
 				box-shadow: none;
 			}
 
