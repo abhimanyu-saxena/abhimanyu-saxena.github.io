@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<!--
+	Stellar by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Research page</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1>My Research Journey</h1>
+						<p>Exploring imitation learning, perception, and intelligent robot control</p>
+					</header>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Content -->
+							<section id="content" class="main">
+								<!-- <span class="image main"><img src="images/pic04.jpg" alt="" /></span> -->
+								<h2><b>Problem Statement</b></h2>
+								<p style="text-align: justify;">I joined the BMV Lab as a Research Assistant, where I had the opportunity to work on an exciting problem involving both soft and hard body manipulation. My team and I focused on automating crab meat harvesting from cooked crabs using Imitation Learning. 
+								</br>We tackled two major subproblems: 
+									<ol>
+										<li>Adding force-torque data to condition the policy, within existing Imitation Learning frameworks, such as <a href="https://tonyzhaozh.github.io/aloha/">ACT</a> and <a href="https://diffusion-policy.cs.columbia.edu/">Diffusion Policy</a>, to improve manipulation of the object.
+										</li>
+										
+										<li>Decoupling the teleoperation and UR5 setups by deploying models trained exclusively on teleoperation images and joint data.</li>
+									</ol>
+								</p>
+								<p style="text-align: justify;">
+									The following sections highlight my experiences, learnings and takeaways from my time at the lab. Please note that this research is ongoing, and the work presented here represents preliminary results. Final outcomes will be shared upon completion of the study. 
+								</p>
+								<h2><b>Building the Teleoperation/ Puppeteering Rig</b></h2>
+								<div class="video-container-teleop">
+									<video width="480" height="360" controls loop playsinline>
+										<source src="images/videos/rice_teleop.mp4" type="video/mp4">
+										Your browser does not support the video tag.
+									</video>
+								
+									<video width="480" height="360" controls loop playsinline>
+										<source src="images/videos/crab_teleop.mp4" type="video/mp4">
+										Your browser does not support the video tag.
+									</video>
+								</div>
+								<p style="text-align: justify;">During the summer of '23, I worked on building and improving the teleoperation setup for the UR5 Arm. I spent most of my time in the lab iterating designs, learning CAD and circuit design, and breaking and rebuilding things. With the 3D-printed UR5e replica (leader arm, as referred to in the <a href="https://tonyzhaozh.github.io/aloha/">ALOHA</a> paper) already in place, I designed a data streaming platform to read encoder data via SPI using a Raspberry Pi 4. I also learned the basics of PCB design, fabrication, and soldering to create a custom <a href="https://www.raspberrypi.com/news/introducing-raspberry-pi-hats/">Raspberry Pi HAT</a> module. I conducted simulation testing of the teleoperation setup in Gazebo, using ROS and MoveIt plugins to control the UR5 arm. We used this setup in tandem with the VR headset to record images and eye gaze data, which was used to reduce noise and distractions and decouple the teleoperation and UR5 setups, and remote operation.
+								</p>
+
+								<p style="text-align: justify;">
+									Takeaways: I learned that even if a system works perfectly in simulation, it’s bound to have issues in the real world. To account for this, I set up a background process that constantly checks the robot's position and force data, just in case the main logic fails. This taught me the importance of building systems that can handle unexpected problems and ensuring there's a safety mechanisms in all stages of development.
+
+								</p>
+								<h2><b>Imitation Learning with Force-Torque Conditioning</b></h2>
+								<div class="video-container-autonomous">
+									<video width="360" height="360" controls loop playsinline>
+										<source src="images/videos/push_block_autonomous.mp4" type="video/mp4">
+										Your browser does not support the video tag.
+									</video>
+								
+									<video width="480" height="360" controls loop playsinline>
+										<source src="images/videos/rice_autonomous.mp4" type="video/mp4">
+										Your browser does not support the video tag.
+									</video>
+								</div>
+								<p  style="text-align: justify;">
+									I worked on adapting the <a href="https://github.com/tonyzhaozh/act">ACT</a> robot framework to support the UR5 manipulator APIs. I integrated it with a ROS-based data collection pipeline and the camera setup outlined in the <a href="https://github.com/tonyzhaozh/aloha">ALOHA hardware</a> repository. We mounted a 3-axis Force-Torque sensor at the end effector base to capture force-torque feedback, recording images, 6D robot joint positions, and 6D FT data at 50Hz. Following a similar approach while porting the <a href="https://github.com/real-stanford/diffusion_policy">Diffusion Policy repository</a> and modified the data collection setup to support multithreading requirements and integrated the Zarr data storage format. With just 50 teleoperated demonstrations, the trained policy successfully performed the scooping task.
+								</p>
+								<div class="video-text-container">
+									<div class="video-container-decoupled">
+										<video width="360" height="400" controls loop playsinline>
+											<source src="images/videos/rice_decoupled.mp4" type="video/mp4">
+											Your browser does not support the video tag.
+										</video>
+									</div>
+								
+									<div class="text-container">
+										<p>
+											To decouple the teleoperation and UR5 setups, we experimented with computer vision techniques such as segmentation, style transfer, and the integration of additional cameras and gaze data into the policy. These approaches aimed to reduce noise and bridge the training-inference domain gap. Our preliminary results show promise, potentially lowering setup costs and enabling faster deployment of new skills to the robot.
+										</p>
+										<p>
+											The video on left shows the real-time policy rollout of the scooping task. The Diffusion Policy was trained exclusively on data from the teleoperation setup, including images, robot TCP, robot joints, and force-torque feedback. The model was then deployed zero-shot on the UR5 setup.
+										</p>
+									</div>
+								</div>
+
+								<p style="text-align: justify;">
+									As famously known in the ML community, neural networks are incredibly lazy and will find a way to overfit even on the smallest similarities in the dataset. Our experiments revealed that simply concatenating the force-torque data was ineffective, as the policy tended to overfit to the proprioception data. To address this, we employed various attention-based techniques to better integrate and represent the multimodal sensor data within the Diffusion Policy. This approach resulted in improved success rates, with the policy generalizing more effectively across different materials and varying platform heights, driven by force-feedback inputs.
+								</p>
+							</br>
+								<ul class="actions special">
+									<li><a href="index.html#Work" class="button">Back</a></li>
+								</ul>
+							</section>
+					</div>
+
+				<!-- Footer -->
+				<footer id="footer">
+					<section id="Contact">
+						<h2>Let’s Connect</h2>
+						<p style="text-align: justify;">I'm actively seeking roles in Computer Vision, Machine Learning and Robotics. 
+							If you have an opportunity that aligns, I’d love to connect!</p>
+							<ul class="icons">
+								<li><a href="https://www.linkedin.com/in/abhimanyu-saxena/" class="icon brands fa-linkedin alt"><span class="label">LinkedIn</span></a></li>
+								<!-- </br> -->
+								<li><a href="https://github.com/abhimanyu-saxena" class="icon brands fa-github alt"><span class="label">Github</span></a></li>
+							</ul>
+					</section>
+					<section>
+						<h2>Contact Details</h2>
+							<dl class="alt">
+								<dt>Address</dt>
+								<dd>Plano, TX 75024 &bull; USA &bull; (Open to relocation)</dd>
+								<dt>Phone</dt>
+								<dd>+1 (240) 927-7313</a></dd>
+								<dt>Email</dt>
+								<dd>
+									abhi.manyu1225@gmail.com
+									<button class="copy-btn" onclick="copyToClipboard(this, 'abhi.manyu1225@gmail.com')">
+										<i class="fas fa-copy"></i>
+									</button> 	
+								</dd>
+								<dd>
+									asaxena4@terpmail.umd.edu
+									<button class="copy-btn" onclick="copyToClipboard(this, 'asaxena4@terpmail.umd.edu')">
+										<i class="fas fa-copy"></i>
+									</button>
+								</dd>
+							</dl>
+						
+					</section>
+					<p class="copyright">&copy; Abhimanyu Saxena. Credits: <a href="https://html5up.net">HTML5 UP</a>.</p>
+				</footer>
+			</div>
+
+		<!-- Scripts -->
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/jquery.scrollex.min.js"></script>
+		<script src="assets/js/jquery.scrolly.min.js"></script>
+		<script src="assets/js/browser.min.js"></script>
+		<script src="assets/js/breakpoints.min.js"></script>
+		<script src="assets/js/util.js"></script>
+		<script src="assets/js/main.js"></script>
+		<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+		<script>
+			function copyToClipboard(button, text) {
+				navigator.clipboard.writeText(text).then(() => {
+					button.innerHTML = '<i class="fas fa-check"></i> Copied!'; // Change icon to checkmark
+					setTimeout(() => {
+						button.innerHTML = '<i class="fas fa-copy"></i>'; // Revert after 2 sec
+					}, 2000);
+				}).catch(err => {
+					console.error('Failed to copy: ', err);
+				});
+			}
+		</script>
+
+	</body>
+</html>
